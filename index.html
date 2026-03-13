@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio Monitor · Cheney</title>
+  <style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0e1a;
+  --panel: #111827;
+  --border: #1e2d45;
+  --accent: #1d4ed8;
+  --text: #e2e8f0;
+  --muted: #64748b;
+  --green: #00d4aa;
+  --red: #ff4d6d;
+  --yellow: #f59e0b;
+  --font: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+}
+body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 13px; min-height: 100vh; }
+a { color: inherit; text-decoration: none; }
+
+/* Header */
+.header { background: linear-gradient(135deg, #0d1b3e 0%, #0a0e1a 100%); border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; }
+.header-logo { display: flex; align-items: center; gap: 10px; }
+.header-logo .dot { width: 10px; height: 10px; border-radius: 50%; animation: pulse 2s infinite; }
+.dot-green { background: var(--green); box-shadow: 0 0 8px var(--green); }
+.dot-red   { background: var(--red); box-shadow: 0 0 8px var(--red); }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+.header h1 { font-size: 18px; font-weight: 700; letter-spacing: 1px; color: #fff; }
+.header h1 span { color: var(--green); }
+.header-meta { font-size: 11px; color: var(--muted); text-align: right; }
+.header-meta .ts { color: var(--yellow); }
+
+/* Summary strip */
+.summary { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; padding: 16px 24px; }
+.sum-card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+.sum-card .label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+.sum-card .value { font-size: 22px; font-weight: 700; }
+.sum-card .sub   { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+/* Section */
+.section { padding: 0 24px 20px; }
+.sec-title { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; padding: 14px 0 10px; border-bottom: 1px solid var(--border); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.sec-title span { color: var(--green); font-size: 14px; }
+
+/* Holdings table */
+.htable { width: 100%; border-collapse: collapse; }
+.htable th { text-align: left; padding: 6px 10px; font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); }
+.htable td { padding: 9px 10px; border-bottom: 1px solid rgba(30,45,69,.5); vertical-align: middle; }
+.htable tr:hover td { background: rgba(29,78,216,.06); }
+.sym-badge { display: inline-block; background: rgba(29,78,216,.2); border: 1px solid rgba(29,78,216,.4); color: #93c5fd; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+.theme-tag { display: inline-block; background: rgba(0,212,170,.1); border: 1px solid rgba(0,212,170,.2); color: var(--green); padding: 1px 6px; border-radius: 3px; font-size: 10px; }
+.pnl-pos { color: var(--green); }
+.pnl-neg { color: var(--red); }
+.pnl-neu { color: var(--muted); }
+.flow-mini { font-size: 10px; color: var(--muted); }
+.flow-mini span { color: var(--yellow); }
+
+/* Watchlist grid */
+.wl-market { margin-bottom: 18px; }
+.market-header { font-size: 10px; color: var(--yellow); text-transform: uppercase; letter-spacing: 2px; padding: 6px 0; border-bottom: 1px solid rgba(245,158,11,.2); margin-bottom: 8px; }
+.wl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: 8px; }
+.wl-card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; position: relative; overflow: hidden; transition: border-color .2s; }
+.wl-card:hover { border-color: rgba(29,78,216,.5); }
+.wl-card::before { content:''; position:absolute; top:0; left:0; width:3px; height:100%; }
+.wl-card.pos::before { background: var(--green); }
+.wl-card.neg::before { background: var(--red); }
+.wl-card.neu::before { background: var(--muted); }
+.wl-name { font-size: 12px; font-weight: 600; color: #fff; }
+.wl-sym  { font-size: 10px; color: var(--muted); margin-bottom: 8px; }
+.wl-price { font-size: 18px; font-weight: 700; }
+.wl-chg  { font-size: 11px; margin-top: 2px; }
+.wl-theme { position: absolute; top: 10px; right: 10px; font-size: 9px; color: var(--muted); background: rgba(0,0,0,.3); padding: 2px 5px; border-radius: 3px; }
+.wl-flow { margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--border); display: flex; gap: 8px; font-size: 10px; color: var(--muted); flex-wrap: wrap; }
+.wl-flow .fi { display: flex; flex-direction: column; }
+.wl-flow .fi .fk { font-size: 9px; color: #475569; }
+.wl-flow .fi .fv { color: var(--yellow); }
+.na-card { background: rgba(0,0,0,.2); border-style: dashed; }
+
+/* Footer */
+.footer { text-align: center; padding: 20px; font-size: 10px; color: var(--muted); border-top: 1px solid var(--border); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .summary { grid-template-columns: repeat(2,1fr); }
+  .section { padding: 0 12px 16px; }
+  .header { padding: 12px; }
+  .wl-grid { grid-template-columns: repeat(auto-fill, minmax(160px,1fr)); }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-logo">
+    <div class="dot dot-green"></div>
+    <h1>PORTFOLIO <span>MONITOR</span></h1>
+  </div>
+  <div class="header-meta">
+    <div>AI产业链 · 中美消费 · 核能铀矿</div>
+    <div class="ts">更新时间 2026-03-13 00:54</div>
+  </div>
+</div>
+
+<!-- SUMMARY STRIP -->
+<div class="summary">
+  <div class="sum-card">
+    <div class="label">总市值</div>
+    <div class="value">$4,627,368</div>
+    <div class="sub">持仓 6 只</div>
+  </div>
+  <div class="sum-card">
+    <div class="label">总成本</div>
+    <div class="value">$3,822,178</div>
+    <div class="sub">&nbsp;</div>
+  </div>
+  <div class="sum-card">
+    <div class="label">总盈亏</div>
+    <div class="value" style="color:#00d4aa">+$805,190</div>
+    <div class="sub" style="color:#00d4aa">+21.07%</div>
+  </div>
+  <div class="sum-card">
+    <div class="label">观察列表</div>
+    <div class="value">16</div>
+    <div class="sub">个标的</div>
+  </div>
+</div>
+
+<!-- HOLDINGS -->
+<div class="section">
+  <div class="sec-title"><span>◈</span> 持仓明细</div>
+  <table class="htable">
+    <thead>
+      <tr>
+        <th>标的</th><th>主题</th><th style="text-align:right">数量</th>
+        <th style="text-align:right">成本价</th><th style="text-align:right">现价</th>
+        <th style="text-align:right">市值</th><th style="text-align:right">盈亏</th>
+        <th style="text-align:right">涨跌%</th><th>资金流向</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>🔌 <span class="sym-badge">6869.HK</span><br><span style="font-size:11px;color:#94a3b8">长飞光纤</span></td>
+          <td><span class="theme-tag">AI光纤通信</span></td>
+          <td style="text-align:right">19,000</td>
+          <td style="text-align:right">136.205</td>
+          <td style="text-align:right;font-weight:600">158.2</td>
+          <td style="text-align:right">300.6万</td>
+          <td style="text-align:right" class="pnl-pos">+417,905</td>
+          <td style="text-align:right" class="pnl-pos">+16.15%</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>⚡ <span class="sym-badge">7709.HK</span><br><span style="font-size:11px;color:#94a3b8">两倍做多海力士</span></td>
+          <td><span class="theme-tag">AI存储(杠杆)</span></td>
+          <td style="text-align:right">30,000</td>
+          <td style="text-align:right">24.087</td>
+          <td style="text-align:right;font-weight:600">28.5</td>
+          <td style="text-align:right">85.5万</td>
+          <td style="text-align:right" class="pnl-pos">+132,390</td>
+          <td style="text-align:right" class="pnl-pos">+18.32%</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>💾 <span class="sym-badge">SNDK.US</span><br><span style="font-size:11px;color:#94a3b8">闪迪</span></td>
+          <td><span class="theme-tag">AI存储</span></td>
+          <td style="text-align:right">1,000</td>
+          <td style="text-align:right">350.399</td>
+          <td style="text-align:right;font-weight:600">619.2</td>
+          <td style="text-align:right">$619,200</td>
+          <td style="text-align:right" class="pnl-pos">+268,801</td>
+          <td style="text-align:right" class="pnl-pos">+76.71%</td>
+          <td><div class="flow-mini">
+              Short:<span>6.14%</span> Inst:<span>81.98%</span>
+              RelVol:<span>1.33</span> 1W:<span style="color:#00d4aa">10.22%</span>
+              1M:<span style="color:#00d4aa">15.09%</span>
+            </div></td>
+        </tr>
+        <tr>
+          <td>🔬 <span class="sym-badge">AXTI.US</span><br><span style="font-size:11px;color:#94a3b8">AXT磷化铟</span></td>
+          <td><span class="theme-tag">AI光互连基板</span></td>
+          <td style="text-align:right">2,000</td>
+          <td style="text-align:right">44.168</td>
+          <td style="text-align:right;font-weight:600">49.63</td>
+          <td style="text-align:right">$99,260</td>
+          <td style="text-align:right" class="pnl-pos">+10,924</td>
+          <td style="text-align:right" class="pnl-pos">+12.37%</td>
+          <td><div class="flow-mini">
+              Short:<span>11.98%</span> Inst:<span>54.64%</span>
+              RelVol:<span>2.35</span> 1W:<span style="color:#00d4aa">27.03%</span>
+              1M:<span style="color:#00d4aa">102.39%</span>
+            </div></td>
+        </tr>
+        <tr>
+          <td>☀️ <span class="sym-badge">CSIQ.US</span><br><span style="font-size:11px;color:#94a3b8">加拿大太阳能</span></td>
+          <td><span class="theme-tag">太阳能</span></td>
+          <td style="text-align:right">1,600</td>
+          <td style="text-align:right">29.39</td>
+          <td style="text-align:right;font-weight:600">18.33</td>
+          <td style="text-align:right">$29,328</td>
+          <td style="text-align:right" class="pnl-neg">-17,696</td>
+          <td style="text-align:right" class="pnl-neg">-37.63%</td>
+          <td><div class="flow-mini">
+              Short:<span>27.58%</span> Inst:<span>41.00%</span>
+              RelVol:<span>0.58</span> 1W:<span style="color:#00d4aa">10.66%</span>
+              1M:<span style="color:#ff4d6d">-15.65%</span>
+            </div></td>
+        </tr>
+        <tr>
+          <td>💄 <span class="sym-badge">SY.US</span><br><span style="font-size:11px;color:#94a3b8">新氧科技</span></td>
+          <td><span class="theme-tag">中国医美消费</span></td>
+          <td style="text-align:right">6,000</td>
+          <td style="text-align:right">4.319</td>
+          <td style="text-align:right;font-weight:600">3.13</td>
+          <td style="text-align:right">$18,780</td>
+          <td style="text-align:right" class="pnl-neg">-7,134</td>
+          <td style="text-align:right" class="pnl-neg">-27.53%</td>
+          <td><div class="flow-mini">
+              Short:<span>1.85%</span> Inst:<span>11.72%</span>
+              RelVol:<span>0.58</span> 1W:<span style="color:#00d4aa">7.56%</span>
+              1M:<span style="color:#ff4d6d">-15.63%</span>
+            </div></td>
+        </tr></tbody>
+  </table>
+</div>
+
+<!-- WATCHLIST -->
+<div class="section">
+  <div class="sec-title"><span>◈</span> 观察列表</div>
+  
+        <div class="wl-market">
+          <div class="market-header">▸ A股</div>
+          <div class="wl-grid">
+                <div class="wl-card pos">
+                  <div class="wl-theme">📡 AI光模块</div>
+                  <div class="wl-name">天孚通信</div>
+                  <div class="wl-sym">300394.SZ</div>
+                  <div class="wl-price" style="color:#00d4aa">¥334.04</div>
+                  <div class="wl-chg" style="color:#00d4aa">▲ +0.92% &nbsp;|&nbsp; Vol: 35.7M</div>
+                  
+                </div>
+                <div class="wl-card pos">
+                  <div class="wl-theme">🔌 AI光纤</div>
+                  <div class="wl-name">亨通光电</div>
+                  <div class="wl-sym">600487.SH</div>
+                  <div class="wl-price" style="color:#00d4aa">¥51.42</div>
+                  <div class="wl-chg" style="color:#00d4aa">▲ +1.22% &nbsp;|&nbsp; Vol: 150.7M</div>
+                  
+                </div>
+                <div class="wl-card neg">
+                  <div class="wl-theme">🔌 AI光纤</div>
+                  <div class="wl-name">烽火通信</div>
+                  <div class="wl-sym">600498.SH</div>
+                  <div class="wl-price" style="color:#ff4d6d">¥55.50</div>
+                  <div class="wl-chg" style="color:#ff4d6d">▼ -2.68% &nbsp;|&nbsp; Vol: 103.5M</div>
+                  
+                </div></div>
+        </div>
+        <div class="wl-market">
+          <div class="market-header">▸ 港股</div>
+          <div class="wl-grid">
+                <div class="wl-card neg">
+                  <div class="wl-theme">☢️ 核能/铀矿</div>
+                  <div class="wl-name">中广核矿业</div>
+                  <div class="wl-sym">1164.HK</div>
+                  <div class="wl-price" style="color:#ff4d6d">HK$4.350</div>
+                  <div class="wl-chg" style="color:#ff4d6d">▼ -1.58% &nbsp;|&nbsp; Vol: 60.2M</div>
+                  
+                </div></div>
+        </div>
+        <div class="wl-market">
+          <div class="market-header">▸ 日股</div>
+          <div class="wl-grid">
+                <div class="wl-card neg">
+                  <div class="wl-theme">🇯🇵 光纤/铜箔</div>
+                  <div class="wl-name">古河电气工业</div>
+                  <div class="wl-sym">5801.T</div>
+                  <div class="wl-price" style="color:#ff4d6d">¥28,930</div>
+                  <div class="wl-chg" style="color:#ff4d6d">▼ -2.76% &nbsp;|&nbsp; Vol: 7.7M</div>
+                  
+                </div>
+                <div class="wl-card neg">
+                  <div class="wl-theme">🇯🇵 铜箔/材料</div>
+                  <div class="wl-name">三井金属</div>
+                  <div class="wl-sym">5706.T</div>
+                  <div class="wl-price" style="color:#ff4d6d">¥31,260</div>
+                  <div class="wl-chg" style="color:#ff4d6d">▼ -3.46% &nbsp;|&nbsp; Vol: 2.0M</div>
+                  
+                </div>
+                <div class="wl-card neg">
+                  <div class="wl-theme">🇯🇵 NAND/AI存储</div>
+                  <div class="wl-name">铠侠Kioxia</div>
+                  <div class="wl-sym">285A.T</div>
+                  <div class="wl-price" style="color:#ff4d6d">¥21,245</div>
+                  <div class="wl-chg" style="color:#ff4d6d">▼ -0.63% &nbsp;|&nbsp; Vol: 35.6M</div>
+                  
+                </div>
+                <div class="wl-card neg">
+                  <div class="wl-theme">🇯🇵 玻璃纤维/特种材料</div>
+                  <div class="wl-name">日东纺</div>
+                  <div class="wl-sym">3110.T</div>
+                  <div class="wl-price" style="color:#ff4d6d">¥21,700</div>
+                  <div class="wl-chg" style="color:#ff4d6d">▼ -3.04% &nbsp;|&nbsp; Vol: 1.9M</div>
+                  
+                </div></div>
+        </div>
+        <div class="wl-market">
+          <div class="market-header">▸ 台股</div>
+          <div class="wl-grid">
+                <div class="wl-card pos">
+                  <div class="wl-theme">🇹🇼 ABF载板/AI封装</div>
+                  <div class="wl-name">欣兴电子</div>
+                  <div class="wl-sym">3037.TW</div>
+                  <div class="wl-price" style="color:#00d4aa">NT$480.0</div>
+                  <div class="wl-chg" style="color:#00d4aa">▲ +3.00% &nbsp;|&nbsp; Vol: 15.3M</div>
+                  
+                </div></div>
+        </div>
+        <div class="wl-market">
+          <div class="market-header">▸ 美股</div>
+          <div class="wl-grid">
+                <div class="wl-card neg">
+                  <div class="wl-theme">💡 AI光模块</div>
+                  <div class="wl-name">Applied Optoelectronics</div>
+                  <div class="wl-sym">AAOI</div>
+                  <div class="wl-price" style="color:#ff4d6d">$112.890</div>
+                  <div class="wl-chg" style="color:#ff4d6d">▼ -11.12% &nbsp;|&nbsp; Vol: 11.2M</div>
+                  <div class="wl-flow"><div class="fi"><span class="fk">Short</span><span class="fv" style="color:var(--yellow)">14.89%</span></div><div class="fi"><span class="fk">Inst</span><span class="fv" style="color:var(--yellow)">64.47%</span></div><div class="fi"><span class="fk">RelVol</span><span class="fv" style="color:var(--yellow)">3.21</span></div><div class="fi"><span class="fk">1W</span><span class="fv" style="color:#00d4aa">10.08%</span></div><div class="fi"><span class="fk">1M</span><span class="fv" style="color:#00d4aa">129.59%</span></div></div>
+                </div>
+                <div class="wl-card neg">
+                  <div class="wl-theme">💡 AI光器件</div>
+                  <div class="wl-name">Lumentum</div>
+                  <div class="wl-sym">LITE</div>
+                  <div class="wl-price" style="color:#ff4d6d">$629.350</div>
+                  <div class="wl-chg" style="color:#ff4d6d">▼ -6.35% &nbsp;|&nbsp; Vol: 3.2M</div>
+                  <div class="wl-flow"><div class="fi"><span class="fk">Short</span><span class="fv" style="color:var(--yellow)">15.85%</span></div><div class="fi"><span class="fk">Inst</span><span class="fv" style="color:var(--yellow)">112.58%</span></div><div class="fi"><span class="fk">RelVol</span><span class="fv" style="color:var(--yellow)">1.22</span></div><div class="fi"><span class="fk">1W</span><span class="fv" style="color:#ff4d6d">-2.60%</span></div><div class="fi"><span class="fk">1M</span><span class="fv" style="color:#00d4aa">12.97%</span></div></div>
+                </div>
+                <div class="wl-card neg">
+                  <div class="wl-theme">💡 AI光互连</div>
+                  <div class="wl-name">Coherent</div>
+                  <div class="wl-sym">COHR</div>
+                  <div class="wl-price" style="color:#ff4d6d">$246.760</div>
+                  <div class="wl-chg" style="color:#ff4d6d">▼ -1.85% &nbsp;|&nbsp; Vol: 3.6M</div>
+                  <div class="wl-flow"><div class="fi"><span class="fk">Short</span><span class="fv" style="color:var(--yellow)">3.31%</span></div><div class="fi"><span class="fk">Inst</span><span class="fv" style="color:var(--yellow)">83.94%</span></div><div class="fi"><span class="fk">RelVol</span><span class="fv" style="color:var(--yellow)">1.23</span></div><div class="fi"><span class="fk">1W</span><span class="fv" style="color:#ff4d6d">-2.46%</span></div><div class="fi"><span class="fk">1M</span><span class="fv" style="color:#00d4aa">8.43%</span></div></div>
+                </div>
+                <div class="wl-card neg">
+                  <div class="wl-theme">🟩 AI计算/GPU</div>
+                  <div class="wl-name">NVIDIA</div>
+                  <div class="wl-sym">NVDA</div>
+                  <div class="wl-price" style="color:#ff4d6d">$183.784</div>
+                  <div class="wl-chg" style="color:#ff4d6d">▼ -1.21% &nbsp;|&nbsp; Vol: 85.7M</div>
+                  <div class="wl-flow"><div class="fi"><span class="fk">Short</span><span class="fv" style="color:var(--yellow)">1.06%</span></div><div class="fi"><span class="fk">Inst</span><span class="fv" style="color:var(--yellow)">68.48%</span></div><div class="fi"><span class="fk">RelVol</span><span class="fv" style="color:var(--yellow)">0.91</span></div><div class="fi"><span class="fk">1W</span><span class="fv" style="color:#00d4aa">0.69%</span></div><div class="fi"><span class="fk">1M</span><span class="fv" style="color:#ff4d6d">-2.09%</span></div></div>
+                </div>
+                <div class="wl-card neg">
+                  <div class="wl-theme">🔵 CPU/AI芯片</div>
+                  <div class="wl-name">Intel</div>
+                  <div class="wl-sym">INTC</div>
+                  <div class="wl-price" style="color:#ff4d6d">$45.630</div>
+                  <div class="wl-chg" style="color:#ff4d6d">▼ -4.90% &nbsp;|&nbsp; Vol: 47.7M</div>
+                  <div class="wl-flow"><div class="fi"><span class="fk">Short</span><span class="fv" style="color:var(--yellow)">2.85%</span></div><div class="fi"><span class="fk">Inst</span><span class="fv" style="color:var(--yellow)">59.12%</span></div><div class="fi"><span class="fk">RelVol</span><span class="fv" style="color:var(--yellow)">0.89</span></div><div class="fi"><span class="fk">1W</span><span class="fv" style="color:#ff4d6d">-0.39%</span></div><div class="fi"><span class="fk">1M</span><span class="fv" style="color:#ff4d6d">-2.89%</span></div></div>
+                </div></div>
+        </div>
+        <div class="wl-market">
+          <div class="market-header">▸ 美股ETF</div>
+          <div class="wl-grid">
+                <div class="wl-card neg">
+                  <div class="wl-theme">☢️ 铀矿/核能</div>
+                  <div class="wl-name">Uranium ETF</div>
+                  <div class="wl-sym">URNM</div>
+                  <div class="wl-price" style="color:#ff4d6d">$67.215</div>
+                  <div class="wl-chg" style="color:#ff4d6d">▼ -0.42% &nbsp;|&nbsp; Vol: 258K</div>
+                  
+                </div></div>
+        </div>
+        <div class="wl-market">
+          <div class="market-header">▸ 韩股</div>
+          <div class="wl-grid">
+                <div class="wl-card neg">
+                  <div class="wl-theme">🇰🇷 AI存储/HBM</div>
+                  <div class="wl-name">SK海力士</div>
+                  <div class="wl-sym">000660.KS</div>
+                  <div class="wl-price" style="color:#ff4d6d">₩930,000</div>
+                  <div class="wl-chg" style="color:#ff4d6d">▼ -2.62% &nbsp;|&nbsp; Vol: 4.7M</div>
+                  
+                </div></div>
+        </div>
+</div>
+
+<div class="footer">
+  Portfolio Monitor · Auto-generated 2026-03-13 00:54 · Cheney Investment Research
+</div>
+
+</body>
+</html>
