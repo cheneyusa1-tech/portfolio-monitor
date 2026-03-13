@@ -87,7 +87,40 @@ a { color: inherit; text-decoration: none; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
+/* ── Stock Detail Cards ──────────────────────────────────────── */
+.sd-card { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 14px; overflow: hidden; }
+.sd-header { display: flex; align-items: center; gap: 10px; padding: 11px 16px; background: rgba(29,78,216,.08); border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+.sd-sym-badge { background: rgba(29,78,216,.25); border: 1px solid rgba(29,78,216,.5); color: #93c5fd; padding: 2px 10px; border-radius: 5px; font-weight: 700; font-size: 12px; }
+.sd-name { color: #94a3b8; font-size: 12px; }
+.sd-pct { font-weight: 700; font-size: 14px; margin-left: auto; }
+.sd-price { font-weight: 700; font-size: 14px; color: #fff; }
+.sd-body { display: grid; grid-template-columns: 1.1fr 0.9fr 1fr; }
+.sd-col { padding: 14px 16px; border-right: 1px solid var(--border); }
+.sd-col:last-child { border-right: none; }
+.sd-col-title { font-size: 10px; color: var(--yellow); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; font-weight: 600; }
+.sd-news-item { margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid rgba(30,45,69,.4); }
+.sd-news-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.sd-date-badge { display: inline-block; background: rgba(245,158,11,.1); color: var(--yellow); border: 1px solid rgba(245,158,11,.2); padding: 1px 6px; border-radius: 3px; font-size: 9px; margin-bottom: 3px; }
+.sd-news-title { font-size: 12px; color: var(--text); line-height: 1.4; display: block; }
+.sd-news-title:hover { color: var(--green); }
+.sd-source-tag { font-size: 10px; color: var(--muted); margin-top: 2px; display: block; }
+.sd-news-sum { font-size: 11px; color: #94a3b8; margin-top: 3px; line-height: 1.4; }
+.sd-social-list { list-style: none; }
+.sd-social-item { font-size: 11px; color: #cbd5e1; line-height: 1.55; margin-bottom: 9px; padding-left: 14px; position: relative; }
+.sd-social-item::before { content: '▸'; position: absolute; left: 0; color: var(--green); font-size: 10px; top: 1px; }
+.sd-flow-tbl { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+.sd-flow-tbl th { font-size: 10px; color: var(--muted); text-align: left; padding: 4px 6px; border-bottom: 1px solid var(--border); }
+.sd-flow-tbl td { font-size: 11px; padding: 5px 6px; border-bottom: 1px solid rgba(30,45,69,.3); vertical-align: top; }
+.sd-flow-tbl td:nth-child(2) { color: var(--yellow); font-weight: 600; white-space: nowrap; }
+.sd-flow-tbl td:nth-child(3) { color: #94a3b8; font-size: 10px; }
+.sd-verdict { font-size: 11px; line-height: 1.6; color: #cbd5e1; background: rgba(0,212,170,.05); border: 1px solid rgba(0,212,170,.15); border-radius: 6px; padding: 8px 10px; }
+.sd-no-data { font-size: 11px; color: var(--muted); font-style: italic; padding: 16px 0; text-align: center; }
 /* Responsive */
+@media (max-width: 900px) {
+  .sd-body { grid-template-columns: 1fr; }
+  .sd-col { border-right: none; border-bottom: 1px solid var(--border); }
+  .sd-col:last-child { border-bottom: none; }
+}
 @media (max-width: 768px) {
   .summary { grid-template-columns: repeat(2,1fr); }
   .section { padding: 0 12px 16px; }
@@ -230,6 +263,272 @@ a { color: inherit; text-decoration: none; }
             </div></td>
         </tr></tbody>
   </table>
+</div>
+
+<!-- HOLDINGS DETAIL -->
+<div class="section">
+  <div class="sec-title"><span>◈</span> 持仓详细分析</div>
+  <div class="sd-card">
+          <div class="sd-header">
+            <span style="font-size:16px">🔌</span>
+            <span class="sd-sym-badge">6869.HK</span>
+            <span class="sd-name">长飞光纤</span>
+            <span class="sd-pct pnl-pos">+16.15%</span>
+            <span class="sd-price">HKD 158.2</span>
+          </div>
+          <div class="sd-body">
+            <div class="sd-col">
+              <div class="sd-col-title">📰 最新新闻</div>
+              <div class="sd-no-data">今日暂无新闻（定时任务运行后自动更新）</div>
+            </div>
+            <div class="sd-col">
+              <div class="sd-col-title">💬 Reddit / X 热度</div>
+              <div class="sd-no-data">社交媒体数据（定时任务运行后更新）</div>
+            </div>
+            <div class="sd-col">
+              <div class="sd-col-title">💰 资金流向</div>
+              <div class="sd-no-data">资金流向数据仅支持美股（Finviz）</div>
+            </div>
+          </div>
+        </div><div class="sd-card">
+          <div class="sd-header">
+            <span style="font-size:16px">⚡</span>
+            <span class="sd-sym-badge">7709.HK</span>
+            <span class="sd-name">两倍做多海力士</span>
+            <span class="sd-pct pnl-pos">+18.32%</span>
+            <span class="sd-price">HKD 28.5</span>
+          </div>
+          <div class="sd-body">
+            <div class="sd-col">
+              <div class="sd-col-title">📰 最新新闻</div>
+              <div class="sd-no-data">今日暂无新闻（定时任务运行后自动更新）</div>
+            </div>
+            <div class="sd-col">
+              <div class="sd-col-title">💬 Reddit / X 热度</div>
+              <div class="sd-no-data">社交媒体数据（定时任务运行后更新）</div>
+            </div>
+            <div class="sd-col">
+              <div class="sd-col-title">💰 资金流向</div>
+              <div class="sd-no-data">资金流向数据仅支持美股（Finviz）</div>
+            </div>
+          </div>
+        </div><div class="sd-card">
+          <div class="sd-header">
+            <span style="font-size:16px">💾</span>
+            <span class="sd-sym-badge">SNDK.US</span>
+            <span class="sd-name">闪迪</span>
+            <span class="sd-pct pnl-pos">+76.60%</span>
+            <span class="sd-price">USD 618.82</span>
+          </div>
+          <div class="sd-body">
+            <div class="sd-col">
+              <div class="sd-col-title">📰 最新新闻</div>
+              <div class="sd-no-data">今日暂无新闻（定时任务运行后自动更新）</div>
+            </div>
+            <div class="sd-col">
+              <div class="sd-col-title">💬 Reddit / X 热度</div>
+              <div class="sd-no-data">社交媒体数据（定时任务运行后更新）</div>
+            </div>
+            <div class="sd-col">
+              <div class="sd-col-title">💰 资金流向</div>
+              <table class="sd-flow-tbl">
+              <tr><th>指标</th><th>数值</th><th>解读</th></tr>
+              <tr>
+                  <td>机构持股</td>
+                  <td style="color:var(--yellow)">81.98%</td>
+                  <td>极高机构集中度，筹码稳定</td>
+                </tr><tr>
+                  <td>机构增减仓</td>
+                  <td style="color:#ff4d6d">-4.42%</td>
+                  <td>机构小幅减仓（可能止盈）</td>
+                </tr><tr>
+                  <td>空头比例</td>
+                  <td style="color:var(--yellow)">6.14%</td>
+                  <td>做空比例适中</td>
+                </tr><tr>
+                  <td>相对成交量</td>
+                  <td style="color:var(--yellow)">1.01</td>
+                  <td>成交量正常</td>
+                </tr><tr>
+                  <td>近一周涨幅</td>
+                  <td style="color:#00d4aa">9.41%</td>
+                  <td>近一周表现强劲</td>
+                </tr><tr>
+                  <td>近一月涨幅</td>
+                  <td style="color:#00d4aa">14.25%</td>
+                  <td>近一月强势</td>
+                </tr><tr>
+                  <td>YTD涨幅</td>
+                  <td style="color:#00d4aa">160.69%</td>
+                  <td></td>
+                </tr>
+            </table>
+            <div class="sd-verdict">【资金判断】偏多。机构主导筹码(82%)，机构小幅减仓（高位锁利），做空比例6.1%，YTD+160.7%。</div>
+            </div>
+          </div>
+        </div><div class="sd-card">
+          <div class="sd-header">
+            <span style="font-size:16px">🔬</span>
+            <span class="sd-sym-badge">AXTI.US</span>
+            <span class="sd-name">AXT磷化铟</span>
+            <span class="sd-pct pnl-pos">+5.80%</span>
+            <span class="sd-price">USD 46.73</span>
+          </div>
+          <div class="sd-body">
+            <div class="sd-col">
+              <div class="sd-col-title">📰 最新新闻</div>
+              <div class="sd-no-data">今日暂无新闻（定时任务运行后自动更新）</div>
+            </div>
+            <div class="sd-col">
+              <div class="sd-col-title">💬 Reddit / X 热度</div>
+              <div class="sd-no-data">社交媒体数据（定时任务运行后更新）</div>
+            </div>
+            <div class="sd-col">
+              <div class="sd-col-title">💰 资金流向</div>
+              <table class="sd-flow-tbl">
+              <tr><th>指标</th><th>数值</th><th>解读</th></tr>
+              <tr>
+                  <td>机构持股</td>
+                  <td style="color:var(--yellow)">54.64%</td>
+                  <td>机构持仓适中</td>
+                </tr><tr>
+                  <td>机构增减仓</td>
+                  <td style="color:#00d4aa">41.68%</td>
+                  <td>机构大幅增仓，强烈看多</td>
+                </tr><tr>
+                  <td>空头比例</td>
+                  <td style="color:var(--yellow)">11.98%</td>
+                  <td>做空比例偏高</td>
+                </tr><tr>
+                  <td>相对成交量</td>
+                  <td style="color:var(--yellow)">1.57</td>
+                  <td>成交量高于均值，资金关注上升</td>
+                </tr><tr>
+                  <td>近一周涨幅</td>
+                  <td style="color:#00d4aa">20.45%</td>
+                  <td>近一周强势，动量极强</td>
+                </tr><tr>
+                  <td>近一月涨幅</td>
+                  <td style="color:#00d4aa">91.91%</td>
+                  <td>近一月涨幅显著</td>
+                </tr><tr>
+                  <td>YTD涨幅</td>
+                  <td style="color:#00d4aa">185.81%</td>
+                  <td></td>
+                </tr>
+            </table>
+            <div class="sd-verdict">【资金判断】偏多。机构持仓较高(55%)，机构近期大幅增仓，做空比例12.0%，成交量放大(1.6x)，近一周动量强劲(+20.4%)。</div>
+            </div>
+          </div>
+        </div><div class="sd-card">
+          <div class="sd-header">
+            <span style="font-size:16px">☀️</span>
+            <span class="sd-sym-badge">CSIQ.US</span>
+            <span class="sd-name">加拿大太阳能</span>
+            <span class="sd-pct pnl-neg">-38.65%</span>
+            <span class="sd-price">USD 18.03</span>
+          </div>
+          <div class="sd-body">
+            <div class="sd-col">
+              <div class="sd-col-title">📰 最新新闻</div>
+              <div class="sd-no-data">今日暂无新闻（定时任务运行后自动更新）</div>
+            </div>
+            <div class="sd-col">
+              <div class="sd-col-title">💬 Reddit / X 热度</div>
+              <div class="sd-no-data">社交媒体数据（定时任务运行后更新）</div>
+            </div>
+            <div class="sd-col">
+              <div class="sd-col-title">💰 资金流向</div>
+              <table class="sd-flow-tbl">
+              <tr><th>指标</th><th>数值</th><th>解读</th></tr>
+              <tr>
+                  <td>机构持股</td>
+                  <td style="color:var(--yellow)">41.00%</td>
+                  <td>机构持仓适中</td>
+                </tr><tr>
+                  <td>机构增减仓</td>
+                  <td style="color:#00d4aa">1.53%</td>
+                  <td>机构持仓基本稳定</td>
+                </tr><tr>
+                  <td>空头比例</td>
+                  <td style="color:var(--yellow)">27.58%</td>
+                  <td>极高做空，逼空风险大</td>
+                </tr><tr>
+                  <td>相对成交量</td>
+                  <td style="color:var(--yellow)">0.47</td>
+                  <td>缩量，市场观望情绪浓</td>
+                </tr><tr>
+                  <td>近一周涨幅</td>
+                  <td style="color:#00d4aa">8.35%</td>
+                  <td>近一周表现强劲</td>
+                </tr><tr>
+                  <td>近一月涨幅</td>
+                  <td style="color:#ff4d6d">-17.41%</td>
+                  <td>近一月跌幅较大</td>
+                </tr><tr>
+                  <td>YTD涨幅</td>
+                  <td style="color:#ff4d6d">-24.15%</td>
+                  <td></td>
+                </tr>
+            </table>
+            <div class="sd-verdict">【资金判断】偏多。机构持仓稳定，高做空比例(27.6%)，逼空风险高，缩量(0.5x)，市场观望，YTD-24.1%。</div>
+            </div>
+          </div>
+        </div><div class="sd-card">
+          <div class="sd-header">
+            <span style="font-size:16px">💄</span>
+            <span class="sd-sym-badge">SY.US</span>
+            <span class="sd-name">新氧科技</span>
+            <span class="sd-pct pnl-neg">-27.99%</span>
+            <span class="sd-price">USD 3.11</span>
+          </div>
+          <div class="sd-body">
+            <div class="sd-col">
+              <div class="sd-col-title">📰 最新新闻</div>
+              <div class="sd-no-data">今日暂无新闻（定时任务运行后自动更新）</div>
+            </div>
+            <div class="sd-col">
+              <div class="sd-col-title">💬 Reddit / X 热度</div>
+              <div class="sd-no-data">社交媒体数据（定时任务运行后更新）</div>
+            </div>
+            <div class="sd-col">
+              <div class="sd-col-title">💰 资金流向</div>
+              <table class="sd-flow-tbl">
+              <tr><th>指标</th><th>数值</th><th>解读</th></tr>
+              <tr>
+                  <td>机构持股</td>
+                  <td style="color:var(--yellow)">11.72%</td>
+                  <td>机构持仓偏低</td>
+                </tr><tr>
+                  <td>机构增减仓</td>
+                  <td style="color:#00d4aa">0.04%</td>
+                  <td>机构持仓基本稳定</td>
+                </tr><tr>
+                  <td>空头比例</td>
+                  <td style="color:var(--yellow)">1.85%</td>
+                  <td>做空压力小</td>
+                </tr><tr>
+                  <td>相对成交量</td>
+                  <td style="color:var(--yellow)">0.37</td>
+                  <td>缩量，市场观望情绪浓</td>
+                </tr><tr>
+                  <td>近一周涨幅</td>
+                  <td style="color:#00d4aa">6.87%</td>
+                  <td>近一周表现强劲</td>
+                </tr><tr>
+                  <td>近一月涨幅</td>
+                  <td style="color:#ff4d6d">-16.17%</td>
+                  <td>近一月跌幅较大</td>
+                </tr><tr>
+                  <td>YTD涨幅</td>
+                  <td style="color:#00d4aa">21.48%</td>
+                  <td></td>
+                </tr>
+            </table>
+            <div class="sd-verdict">【资金判断】偏多。机构持仓稳定，空头压力小(1.9%)，缩量(0.4x)，市场观望，YTD+21.5%。</div>
+            </div>
+          </div>
+        </div>
 </div>
 
 <!-- WATCHLIST -->
